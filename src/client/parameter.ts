@@ -1,0 +1,16 @@
+export enum Parameter {
+    ON_OFF = 0x01,
+    SPEED = 0x02,
+    CURRENT_HUMIDITY = 0x25,
+    MANUAL_SPEED = 0x44,
+    FAN1RPM = 0x4A,
+    FILTER_TIMER = 0x64,
+    RESET_FILTER_TIMER = 0x65,
+    SEARCH = 0x7C,
+    RESET_ALARMS = 0x80,
+    READ_ALARM = 0x83,
+    READ_FIRMWARE_VERSION = 0x86,
+    FILTER_ALARM = 0x88,
+    VENTILATION_MODE = 0xB7,
+    UNIT_TYPE = 0xB9
+}

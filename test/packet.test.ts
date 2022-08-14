@@ -1,3 +1,4 @@
+import { DataEntry } from '../src/client/data-entry';
 import { FunctionType } from '../src/client/function-type';
 import { Packet } from '../src/client/packet';
 import { Parameter } from '../src/client/parameter';
@@ -43,7 +44,7 @@ describe("test packet", () => {
 
   it("should generate firmware update request", async () => {
     // Arrange
-    const packet = new Packet('003E00285742570F', '1111', FunctionType.READ, [{parameter: Parameter.READ_FIRMWARE_VERSION, value: Parameter.UNIT_TYPE}]);
+    const packet = new Packet('003E00285742570F', '1111', FunctionType.READ, [DataEntry.of(Parameter.READ_FIRMWARE_VERSION), DataEntry.of(Parameter.UNIT_TYPE)]);
 
     // Act
     const data = packet.toBytes();
@@ -82,6 +83,7 @@ describe("test packet", () => {
     expect(data[29]).toBe(0x05);
   });
 
+  
   it("should parse device response", async () => {
     // Arrange
     const bytes = new Uint8Array([
@@ -141,6 +143,14 @@ describe("test packet", () => {
     // Assert
     console.log('packet: ', packet);
     expect(packet.controllerId).toBe('0040004557425710');
+    expect(packet.password).toBe('');
+    expect(packet.functionType).toBe(FunctionType.RESPONSE);
+
+    expect(packet.dataEntries.length).toBe(2);
+    expect(packet.dataEntries[0].parameter).toBe(Parameter.UNIT_TYPE);
+    expect(packet.dataEntries[0].value!.length).toBe(Parameter.getSize(Parameter.UNIT_TYPE));
+    expect(packet.dataEntries[1].parameter).toBe(Parameter.SEARCH);
+    expect(packet.dataEntries[1].value!.length).toBe(Parameter.getSize(Parameter.SEARCH));
     
   });
 

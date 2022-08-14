@@ -1,6 +1,12 @@
 import { Parameter } from "./parameter";
 
-export class DataEntry {
+export interface DataEntry {
     parameter: Parameter;
-    value?: number;
+    value?: Uint8Array;
+}
+
+export namespace DataEntry {
+    export function of(parameter: Parameter, value?: number) {
+        return {parameter, value: value != null ? Uint8Array.of(value) : undefined};
+    }
 }

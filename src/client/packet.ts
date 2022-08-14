@@ -1,5 +1,6 @@
 import { DataEntry } from "./data-entry";
 import { FunctionType } from "./function-type";
+import { Parameter } from "./parameter";
 
 const MAX_PACKET_SIZE = 256;
 const HEADER = [0xFD, 0xFD];
@@ -46,23 +47,28 @@ export class Packet {
         bytes[index++] = PROTOCOL_TYPE;
         
         // Credentials
-        index = this.addCredential(bytes, index, this._controllerId);
-        index = this.addCredential(bytes, index, this._password);
+        index = this.writeCredential(bytes, index, this._controllerId);
+        index = this.writeCredential(bytes, index, this._password);
 
         // Function
         bytes[index++] = this._functionType;
 
         // Data
+        console.log(this.dataEntries);
         this._dataEntries.forEach(e => {
             bytes[index++] = e.parameter;
-            if(e.value != null) {
-                bytes[index++] = e.value;
+            if(e.value != null && 
+                (this.functionType == FunctionType.WRITE || this.functionType == FunctionType.WRITEREAD)) {
+                const size = Parameter.getSize(e.parameter);
+                for(let i=0;i<size;i++) {
+                    bytes[index++] = e.value[i];
+                }
             }
         })
 
         
         // CRC
-        const checksum = this.calculateChecksum(bytes.subarray(2, index));
+        const checksum = Packet.calculateChecksum(bytes.subarray(2, index));
         bytes[index++] = checksum & 0xFF;
         bytes[index++] = checksum >> 8;
 
@@ -84,6 +90,11 @@ export class Packet {
         const protocolType  = bytes[index++];
         if(protocolType != PROTOCOL_TYPE) throw new Error('Invalid protocol type.');
 
+        // Checksum
+        const checksum = Packet.calculateChecksum(bytes.subarray(2, bytes.length - 2));
+        const datachecksum = bytes[bytes.length - 2] + (bytes[bytes.length - 1] << 8)
+        if(checksum != datachecksum) throw new Error('Invalid checksum.');
+
         // Controller id
         const idResult = Packet.readCredential(bytes, index);
         const controllerId = idResult[0];
@@ -94,7 +105,13 @@ export class Packet {
         const password = passwordResult[0];
         index = passwordResult[1];
 
-        return new Packet(controllerId, password, null, null);
+        // Function
+        const functionType = bytes[index++];
+
+        // Data
+        const dataResult = Packet.readParameters(bytes, index);
+
+        return new Packet(controllerId, password, functionType, dataResult[0]);
     }
 
 
@@ -107,7 +124,7 @@ export class Packet {
         return [credential, index];
     }
 
-    private addCredential(bytes: Uint8Array, index: number, value: string) {
+    private writeCredential(bytes: Uint8Array, index: number, value: string) {
         bytes[index++] = value.length;
         for (let i = 0; i < value.length; i++) {
             bytes[index++] = value.charCodeAt(i);
@@ -115,7 +132,34 @@ export class Packet {
         return index;
     }
 
-    private calculateChecksum(bytes: Uint8Array) {
+    private static readParameters(bytes: Uint8Array, index: number): [DataEntry[], number] {
+        const entries: DataEntry[] = [];
+        while(index < bytes.length - 3) {
+            let parameter = bytes[index++];
+            let value: Uint8Array;
+            let size = 1;
+            if(parameter == 0xFE) {
+                // Change parameter size
+                size = bytes[index++];
+                parameter = bytes[index++];
+            } else {
+                size = Parameter.getSize(parameter);
+                if(size < 0) throw new Error(`Invalid parameter [param=${parameter}]`);
+            }
+
+            if(size > 0) {
+                value = new Uint8Array(size);
+                for(let i=0;i<size;i++) {
+                    value[i] = bytes[index++];
+                }
+            }
+            entries.push({parameter, value});
+        }
+        return [entries, index];
+        
+    }
+
+    private static calculateChecksum(bytes: Uint8Array) {
         let checksum = 0
         for(let i=0;i<bytes.length;i++) {
             checksum += bytes[i];

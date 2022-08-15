@@ -7,20 +7,20 @@ const HEADER = [0xFD, 0xFD];
 const PROTOCOL_TYPE = 0x02;
 
 export class Packet {
-    private _controllerId: string;
+    private _deviceId: string;
     private _password: string;
     private _functionType: FunctionType;
     private _dataEntries: DataEntry[];
 
-    constructor(controllerId: string, password: string, functionType: FunctionType, dataEntries: DataEntry[]) {
-        this._controllerId = controllerId;
+    constructor(deviceId: string, password: string, functionType: FunctionType, dataEntries: DataEntry[]) {
+        this._deviceId = deviceId;
         this._password = password;
         this._functionType = functionType;
         this._dataEntries = dataEntries;
     }
 
-    get controllerId() {
-        return this._controllerId;
+    get deviceId() {
+        return this._deviceId;
     }
 
     get password() {
@@ -47,7 +47,7 @@ export class Packet {
         bytes[index++] = PROTOCOL_TYPE;
         
         // Credentials
-        index = this.writeCredential(bytes, index, this._controllerId);
+        index = this.writeCredential(bytes, index, this._deviceId);
         index = this.writeCredential(bytes, index, this._password);
 
         // Function

@@ -5,9 +5,10 @@ import { FunctionType } from "./function-type";
 import { DataEntry } from "./data-entry";
 import { Parameter } from "./parameter";
 import * as loglevel from 'loglevel';
+import { Response } from "./response";
 
 const BROADCAST_ADDRESS = "255.255.255.255";
-const TIMEOUT = 1000;
+const DEFAULT_TIMEOUT = 1000;
 const logger = loglevel.getLogger('BlaubergVentoClient');
 
 export interface DeviceAddress {
@@ -16,6 +17,8 @@ export interface DeviceAddress {
 }
 
 export class BlaubergVentoClient {
+    
+    timeout = DEFAULT_TIMEOUT;
 
     /**
      * Find devices on the network by emitting a broadcast package and collecting all answering controllers.
@@ -38,7 +41,7 @@ export class BlaubergVentoClient {
 
             const intervalHandle = setInterval(() => {
                 const now = new Date();
-                if(now.getTime() - lastResponseTime.getTime() > TIMEOUT) {
+                if(now.getTime() - lastResponseTime.getTime() > this.timeout) {
                     logger.debug('Timeout for responses. Devices found: ', devices);
                     clearInterval(intervalHandle);
                     socket.close();
@@ -53,13 +56,13 @@ export class BlaubergVentoClient {
                 // We only handle responses to our request.
                 if(packet.functionType == FunctionType.RESPONSE) {
                     logger.debug('Packet is a response from device.', packet);
-                    devices.push({id: packet.controllerId, ip: remote.address});
+                    devices.push({id: packet.deviceId, ip: remote.address});
                     lastResponseTime = new Date();
                 }
             });
         });
 
-        socket.bind({exclusive: false, port: 4000, address: '0.0.0.0'});
+        socket.bind();
         return prom;
     }
 
@@ -70,23 +73,23 @@ export class BlaubergVentoClient {
      * @returns Either a packet or nothing, depending on the packet sent to the controller.
      */
 
-    public send(ip: string, packet: Packet): Promise<Packet | void> {
+    public send(packet: Packet, ip: string = BROADCAST_ADDRESS): Promise<Response | void> {
         const socket = createSocket('udp4');
 
-        const prom = new Promise<Packet>(resolve => {
+        const prom = new Promise<Response | void>(resolve => {
             let requestTime = new Date();
 
-            const doResolve = (value) => {
+            const doResolve = (packet?: Packet, ip?: string) => {
                 clearInterval(intervalHandle);
                 socket.close();
-                resolve(value);
+                resolve(packet != null ? {packet, ip} : null);
             }
 
             const intervalHandle = setInterval(() => {
                 const now = new Date();
-                if(now.getTime() - requestTime.getTime() > TIMEOUT) {
+                if(now.getTime() - requestTime.getTime() > this.timeout) {
                     logger.debug('Timeout for response.');
-                    doResolve(null);
+                    doResolve();
                 }
             }, 20);
 
@@ -95,7 +98,7 @@ export class BlaubergVentoClient {
                 const data = packet.toBytes();
                 socket.send(data, 4000, ip);
                 if(packet.functionType == FunctionType.WRITE) {
-                    doResolve(null);
+                    doResolve();
                 }
             });
             
@@ -106,11 +109,11 @@ export class BlaubergVentoClient {
                 // We only handle responses to our request.
                 if(packet.functionType == FunctionType.RESPONSE) {
                     logger.debug('Packet is a response from device.', packet);
-                    doResolve(packet);
+                    doResolve(packet, remote.address);
                 }
             });
         });
-        socket.bind({exclusive: false, port: 4000, address: '0.0.0.0'});
+        socket.bind();
         return prom;
     }
 

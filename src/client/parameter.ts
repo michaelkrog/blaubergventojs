@@ -40,6 +40,7 @@ export enum Parameter {
     IP_ADDRESS = 0x9C,
     SUBNET_MASK = 0x9D,
     GATEWAY = 0x9E,
+    CURRENT_IP_ADDRESS = 0xA3,
     VENTILATION_MODE = 0xB7,
     UNIT_TYPE = 0xB9
 }

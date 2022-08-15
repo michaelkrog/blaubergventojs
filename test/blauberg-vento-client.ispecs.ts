@@ -3,6 +3,7 @@ import { DataEntry } from '../src/client/data-entry';
 import { FunctionType } from '../src/client/function-type';
 import { Packet } from '../src/client/packet';
 import { Parameter } from '../src/client/parameter';
+import { Response } from '../src/client/response';
 
 describe("test client", () => {
   
@@ -26,14 +27,15 @@ describe("test client", () => {
 
     // Act
     const request = new Packet(device.id, '1111', FunctionType.READ, [DataEntry.of(Parameter.READ_FIRMWARE_VERSION)]);
-    const response = await client.send(device.ip, request) as Packet;
+    const response = await client.send(request, device.ip) as Response;
+    const packet = response.packet;
 
     // Assert
-    console.log(response.dataEntries[0].value);
-    expect(response!.dataEntries.length).toBe(1);
-    expect(response!.dataEntries[0].parameter).toBe(Parameter.READ_FIRMWARE_VERSION);
+    console.log(packet.dataEntries[0].value);
+    expect(packet.dataEntries.length).toBe(1);
+    expect(packet.dataEntries[0].parameter).toBe(Parameter.READ_FIRMWARE_VERSION);
 
-    const value = response!.dataEntries[0].value!;
+    const value = packet.dataEntries[0].value!;
     const major = value[0];
     const minor = value[1];
     const day = value[2];

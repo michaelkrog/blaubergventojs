@@ -138,7 +138,7 @@ describe("test packet", () => {
     const packet = Packet.fromBytes(bytes);
 
     // Assert
-    expect(packet.controllerId).toBe('0040004557425710');
+    expect(packet.deviceId).toBe('0040004557425710');
     expect(packet.password).toBe('');
     expect(packet.functionType).toBe(FunctionType.RESPONSE);
 

@@ -42,7 +42,7 @@ export class Device implements Persistable<string> {
                 device.humidity = dataEntry.value[0];
                 break;
             case Parameter.FAN1RPM:
-                device.fan1Rpm = dataEntry.value[0];
+                device.fan1Rpm = dataEntry.value[0] + (dataEntry.value[1] << 8);
                 break;
             case Parameter.FILTER_ALARM:
                 device.filterAlarm = dataEntry.value[0] === 1;

@@ -4,11 +4,11 @@ import { Packet } from '../src/client/packet';
 import { Parameter } from '../src/client/parameter';
 
 describe("test packet", () => {
-  
-  
+
+
   it("should generate search package", async () => {
     // Arrange
-    const packet = new Packet('DEFAULT_DEVICEID', '', FunctionType.READ, [{parameter: Parameter.SEARCH}]);
+    const packet = new Packet('DEFAULT_DEVICEID', '', FunctionType.READ, [{ parameter: Parameter.SEARCH }]);
 
     // Act
     const data = packet.toBytes();
@@ -81,59 +81,59 @@ describe("test packet", () => {
     expect(data[29]).toBe(0x05);
   });
 
-  
+
   it("should parse device response", async () => {
     // Arrange
     const bytes = new Uint8Array([
-        0xfd,
-        0xfd,
-        0x02,
-        0x10, 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '7'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '2'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '7'.charCodeAt(0), 
-        '1'.charCodeAt(0),
-        '0'.charCodeAt(0),
-        0x00,
-        0x06,
-        0xfe,
-        0x02,
-        0xb9,
-        0x03,
-        0x00,
-        0xfe,
-        0x10,
-        '|'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '0'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '7'.charCodeAt(0), 
-        '4'.charCodeAt(0), 
-        '2'.charCodeAt(0), 
-        '5'.charCodeAt(0), 
-        '7'.charCodeAt(0), 
-        '1'.charCodeAt(0),
-        '0'.charCodeAt(0),
-        0xb6,
-        '\t'.charCodeAt(0)]);
-    
+      0xfd,
+      0xfd,
+      0x02,
+      0x10,
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '7'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '2'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '7'.charCodeAt(0),
+      '1'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      0x00,
+      0x06,
+      0xfe,
+      0x02,
+      0xb9,
+      0x03,
+      0x00,
+      0xfe,
+      0x10,
+      '|'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '7'.charCodeAt(0),
+      '4'.charCodeAt(0),
+      '2'.charCodeAt(0),
+      '5'.charCodeAt(0),
+      '7'.charCodeAt(0),
+      '1'.charCodeAt(0),
+      '0'.charCodeAt(0),
+      0xb6,
+      '\t'.charCodeAt(0)]);
+
     // Act
     const packet = Packet.fromBytes(bytes);
 
@@ -147,7 +147,25 @@ describe("test packet", () => {
     expect(packet.dataEntries[0].value!.length).toBe(Parameter.getSize(Parameter.UNIT_TYPE));
     expect(packet.dataEntries[1].parameter).toBe(Parameter.SEARCH);
     expect(packet.dataEntries[1].value!.length).toBe(Parameter.getSize(Parameter.SEARCH));
-    
+
+  });
+
+
+  it('parses a response with many statues', async () => {
+
+    // Arrange
+    const bytes = new Uint8Array([0xfd, 0xfd, 0x02, 0x10, 0x30, 0x30,
+      0x33, 0x45, 0x30, 0x30, 0x32, 0x38, 0x35, 0x37, 0x34, 0x32, 0x35, 0x37, 0x30, 0x46, 0x04, 0x31,
+      0x31, 0x31, 0x31, 0x06, 0x01, 0x01, 0xb7, 0x02, 0x02, 0x03, 0x44, 0x09, 0xfe, 0x02, 0x4a, 0xac,
+      0x08, 0x88, 0x01, 0xfe, 0x03, 0x64, 0x00, 0x00, 0x00, 0x25, 0x3f, 0xfe, 0x06, 0x86, 0x00, 0x04,
+      0x14, 0x0c, 0xe3, 0x07, 0xfe, 0x04, 0x9c, 0xc0, 0xa8, 0x04, 0x01, 0x36, 0x0f]);
+
+      // Act
+      const packet = Packet.fromBytes(bytes);
+      console.log(packet);
+
+      // Assert
+      expect(packet.dataEntries.length).toBe(10);
   });
 
   

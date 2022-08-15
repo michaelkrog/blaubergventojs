@@ -1,4 +1,4 @@
-import {BlaubergVentoResource} from '../src/blauberg-vento-resource';
+import {BlaubergVentoResource} from '../src/resource/blauberg-vento-resource';
 
 
 describe("test resource", () => {
@@ -10,7 +10,7 @@ describe("test resource", () => {
     
     // Act
     const result = await resource.findAll();
-
+    
     // Assert
     console.log(result);
     expect(result.totalElements).toBe(2);

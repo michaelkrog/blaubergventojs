@@ -7,7 +7,8 @@ const name = require('./package.json').main.replace(/\.js$/, '')
 
 const bundle = config => ({
   ...config,
-  input: 'src/index.ts'
+  input: 'src/index.ts',
+  external: ['dgram']
 })
 
 export default [
@@ -31,7 +32,9 @@ export default [
         sourcemap: true,
         name: 'blaubergvento',
         esModule: false,
-        globals: {}
+        globals: {
+          'dgram': 'dgram'
+        }
       },
       {
         file: `${name}.mjs`,

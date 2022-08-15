@@ -1,7 +1,8 @@
 import { Persistable } from "@apaq/leap-data-core";
-import { DataEntry } from "./client/data-entry";
-import { Packet } from "./client/packet";
-import { Parameter } from "./client/parameter";
+import { DataEntry } from "../client/data-entry";
+import { FunctionType } from "../client/function-type";
+import { Packet } from "../client/packet";
+import { Parameter } from "../client/parameter";
 import { Mode } from "./mode";
 import { Speed } from "./speed";
 
@@ -28,6 +29,16 @@ export class Device implements Persistable<string> {
         public password: string
     ) {}
 
+    public toPacket(): Packet {
+        const dataEntries: DataEntry[] = [
+            DataEntry.of(Parameter.SPEED, this.speed),
+            DataEntry.of(Parameter.VENTILATION_MODE, this.mode),
+            DataEntry.of(Parameter.MANUAL_SPEED, this.manualSpeed),
+            DataEntry.of(Parameter.ON_OFF, this.on ? 1 : 0)
+        ];
+        return new Packet(this.id, this.password, FunctionType.WRITEREAD, dataEntries);
+    }
+
     public static fromPacket(packet: Packet): Device {
         const device = new Device(packet.deviceId, packet.password);
         packet.dataEntries.forEach(e => {
@@ -40,6 +51,9 @@ export class Device implements Persistable<string> {
         switch(dataEntry.parameter) {
             case Parameter.CURRENT_HUMIDITY:
                 device.humidity = dataEntry.value[0];
+                break;
+            case Parameter.VENTILATION_MODE:
+                device.mode = dataEntry.value[0];
                 break;
             case Parameter.FAN1RPM:
                 device.fan1Rpm = dataEntry.value[0] + (dataEntry.value[1] << 8);

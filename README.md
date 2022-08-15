@@ -7,6 +7,11 @@ This module has roots in the (dukaonesdk)[https://github.com/dingusdk/dukaonesdk
 
 The primary goal for this module is to create a Javascript client that makes communicating with Blauberg Vento(and its derivatives) a simple task. My personal need is to integrate it into Homebridge and node-red.
 
+## Installation
+```
+npm i blaubergventojs
+```
+
 The modules 2 levels of communication:
 1. A low level client that mimics the communication protocol specified by Blauberg.
 2. A high level resource that wraps the low level client for easier usage.

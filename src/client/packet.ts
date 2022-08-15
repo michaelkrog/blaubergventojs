@@ -54,7 +54,6 @@ export class Packet {
         bytes[index++] = this._functionType;
 
         // Data
-        console.log(this.dataEntries);
         this._dataEntries.forEach(e => {
             bytes[index++] = e.parameter;
             if(e.value != null && 

@@ -14,7 +14,6 @@ describe("test packet", () => {
     const data = packet.toBytes();
 
     // Assert
-    console.log(data);
     expect(data[0]).toBe(0xFD);
     expect(data[1]).toBe(0xFD);
     expect(data[2]).toBe(0x02);
@@ -50,7 +49,6 @@ describe("test packet", () => {
     const data = packet.toBytes();
 
     // Assert
-    console.log(data);
     expect(data[0]).toBe(0xFD);
     expect(data[1]).toBe(0xFD);
     expect(data[2]).toBe(0x02);
@@ -137,11 +135,9 @@ describe("test packet", () => {
         '\t'.charCodeAt(0)]);
     
     // Act
-    console.log(bytes);
     const packet = Packet.fromBytes(bytes);
 
     // Assert
-    console.log('packet: ', packet);
     expect(packet.controllerId).toBe('0040004557425710');
     expect(packet.password).toBe('');
     expect(packet.functionType).toBe(FunctionType.RESPONSE);

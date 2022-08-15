@@ -6,5 +6,5 @@ module.exports = {
   setupFiles:  [
     "./test/setupJest.js"
   ],
-  testRegex: "\\.spec\\.ts$"
+  testRegex: "\\.ispec\\.ts$"
 };

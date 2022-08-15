@@ -2,6 +2,7 @@ import { CrudRepository, Page, PageRequest } from "@apaq/leap-data-core";
 import { Controller } from "./controller";
 
 export class BlaubergVentoResource implements CrudRepository<Controller, string>{
+    
     findAll(pageable?: PageRequest): Promise<Page<Controller>> {
         throw new Error("Method not implemented.");
     }

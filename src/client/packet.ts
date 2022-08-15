@@ -7,10 +7,10 @@ const HEADER = [0xFD, 0xFD];
 const PROTOCOL_TYPE = 0x02;
 
 export class Packet {
-    _controllerId: string;
-    _password: string;
-    _functionType: FunctionType;
-    _dataEntries: DataEntry[];
+    private _controllerId: string;
+    private _password: string;
+    private _functionType: FunctionType;
+    private _dataEntries: DataEntry[];
 
     constructor(controllerId: string, password: string, functionType: FunctionType, dataEntries: DataEntry[]) {
         this._controllerId = controllerId;

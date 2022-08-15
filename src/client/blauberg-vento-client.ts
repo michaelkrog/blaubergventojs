@@ -73,25 +73,32 @@ export class BlaubergVentoClient {
     public send(ip: string, packet: Packet): Promise<Packet | void> {
         const socket = createSocket('udp4');
 
-        socket.on('listening', function () {
-            logger.debug('Socket started listening. Sending packet.');
-            const data = packet.toBytes();
-            socket.send(data, 4000, ip);
-        });
-
         const prom = new Promise<Packet>(resolve => {
             let requestTime = new Date();
+
+            const doResolve = (value) => {
+                clearInterval(intervalHandle);
+                socket.close();
+                resolve(value);
+            }
 
             const intervalHandle = setInterval(() => {
                 const now = new Date();
                 if(now.getTime() - requestTime.getTime() > TIMEOUT) {
                     logger.debug('Timeout for response.');
-                    clearInterval(intervalHandle);
-                    socket.close();
-                    resolve(null);
+                    doResolve(null);
                 }
             }, 20);
 
+            socket.on('listening', function () {
+                logger.debug('Socket started listening. Sending packet.');
+                const data = packet.toBytes();
+                socket.send(data, 4000, ip);
+                if(packet.functionType == FunctionType.WRITE) {
+                    doResolve(null);
+                }
+            });
+            
             socket.on('message', function (message, remote) {
                 const packet = Packet.fromBytes(message);
                 logger.debug('Packet received.', packet);
@@ -99,9 +106,7 @@ export class BlaubergVentoClient {
                 // We only handle responses to our request.
                 if(packet.functionType == FunctionType.RESPONSE) {
                     logger.debug('Packet is a response from device.', packet);
-                    clearInterval(intervalHandle);
-                    socket.close();
-                    resolve(packet);
+                    doResolve(packet);
                 }
             });
         });

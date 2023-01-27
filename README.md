@@ -1,9 +1,9 @@
 # Introduction
 
-This is a Javascript module with Typescript support for communicating with a Blauberg Vento (as OEMS like Duka One S6w).
+This is a Javascript module with Typescript support for communicating with a Blauberg Vento (and OEMS like Duka One S6w).
 The Blauberg Vento is a one room ventilationsystem with a heat exchanger.
 
-This module has roots in the [dukaonesdk](https://github.com/dingusdk/dukaonesdk/blob/master/readme.md) but has been rewritten from scratch in order to better seperate reponsibilites into different classes, while still beig able to reuse shared logic.
+This module has roots in the [dukaonesdk](https://github.com/dingusdk/dukaonesdk/blob/master/readme.md) but has been rewritten from scratch in order to better seperate reponsibilites into different classes, while still being able to reuse shared logic.
 
 The primary goal for this module is to create a Javascript client that makes communicating with Blauberg Vento(and its derivatives) a simple task. My personal need is to integrate it into Homebridge and node-red.
 
@@ -12,7 +12,7 @@ The primary goal for this module is to create a Javascript client that makes com
 npm i blaubergventojs
 ```
 
-The modules 2 levels of communication:
+The module has the following 2 levels of communication:
 1. A low level client that mimics the communication protocol specified by Blauberg.
 2. A high level resource that wraps the low level client for easier usage.
  

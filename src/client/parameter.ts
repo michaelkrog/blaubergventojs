@@ -1,3 +1,9 @@
+/**
+ * Parameter enumeration.
+ * 
+ * This enum defines various parameters used in communication with devices or controllers.
+ * Each parameter is associated with a unique byte value that represents a specific setting or state.
+ */
 export enum Parameter {
     ON_OFF = 0x01,
     SPEED = 0x02,
@@ -45,53 +51,68 @@ export enum Parameter {
     UNIT_TYPE = 0xB9
 }
 
-const details: {param: number, size: number}[] = [
-    {param: Parameter.ON_OFF, size: 1},
-    {param: Parameter.SPEED, size: 1},    
-    {param: Parameter.BOOT_MODE, size: 1},
-    {param: Parameter.TIMER_MODE, size: 1},
-    {param: Parameter.TIMER_COUNT_DOWN, size: 3},
-    {param: Parameter.HUMIDITY_SENSOR_ACTIVATION, size: 1},
-    {param: Parameter.VOLTAGE_SENSOR_ACTIVATION, size: 1},
-    {param: Parameter.HUMIDITY_THRESHOLD, size: 1},
-    {param: Parameter.CURRENT_RTC_BATTERY_VOLTAGE, size: 2},
-    {param: Parameter.CURRENT_HUMIDITY, size: 1},    
-    {param: Parameter.CURRENT_VOLTAGE_SENSOR_STATE, size: 1},
-    {param: Parameter.CURRENT_RELAY_SENSOR_STATE, size: 1},    
-    {param: Parameter.MANUAL_SPEED, size: 1},
-    {param: Parameter.FAN1RPM, size: 2},
-    {param: Parameter.FAN2RPM, size: 2},
-    {param: Parameter.FILTER_TIMER, size: 3},
-    {param: Parameter.RESET_FILTER_TIMER, size: 1},
-    {param: Parameter.BOOST_MODE_DEACTIVATION_DELAY, size: 1},
-    {param: Parameter.RTC_TIME, size: 3},
-    {param: Parameter.RTC_CALENDAR, size: 4},
-    {param: Parameter.WEEKLY_SCHEDULE, size: 1},
-    {param: Parameter.SCHEDULE_SETUP, size: 6},    
-    {param: Parameter.SEARCH, size: 16},
-    {param: Parameter.MACHINE_HOURS, size: 4},
-    {param: Parameter.RESET_ALARMS, size: 1},
-    {param: Parameter.READ_ALARM, size: 1},
-    {param: Parameter.CLOUD_SERVER_OPERATION_PERMISSION, size: 1},
-    {param: Parameter.READ_FIRMWARE_VERSION, size: 6},
-    {param: Parameter.RESTORE_FACTORY_SETTINGS, size: 1},
-    {param: Parameter.FILTER_ALARM, size: 1},
-    {param: Parameter.WIFI_MODE, size: 1},
-    {param: Parameter.WIFI_NAME, size: 0},    
-    {param: Parameter.WIFI_PASSWORD, size: 0},
-    {param: Parameter.WIFI_ENCRYPTION, size: 1},
-    {param: Parameter.WIFI_CHANNEL, size: 1},
-    {param: Parameter.WIFI_DHCP, size: 1},
-    {param: Parameter.IP_ADDRESS, size: 4},
-    {param: Parameter.SUBNET_MASK, size: 4},
-    {param: Parameter.VENTILATION_MODE, size: 1},
-    {param: Parameter.UNIT_TYPE, size: 2},
+/**
+ * Parameter details with size information.
+ * 
+ * An array of parameter details specifying the size in bytes for each parameter.
+ */
+const details: { param: number, size: number }[] = [
+    { param: Parameter.ON_OFF, size: 1 },
+    { param: Parameter.SPEED, size: 1 },
+    { param: Parameter.BOOT_MODE, size: 1 },
+    { param: Parameter.TIMER_MODE, size: 1 },
+    { param: Parameter.TIMER_COUNT_DOWN, size: 3 },
+    { param: Parameter.HUMIDITY_SENSOR_ACTIVATION, size: 1 },
+    { param: Parameter.VOLTAGE_SENSOR_ACTIVATION, size: 1 },
+    { param: Parameter.HUMIDITY_THRESHOLD, size: 1 },
+    { param: Parameter.CURRENT_RTC_BATTERY_VOLTAGE, size: 2 },
+    { param: Parameter.CURRENT_HUMIDITY, size: 1 },
+    { param: Parameter.CURRENT_VOLTAGE_SENSOR_STATE, size: 1 },
+    { param: Parameter.CURRENT_RELAY_SENSOR_STATE, size: 1 },
+    { param: Parameter.MANUAL_SPEED, size: 1 },
+    { param: Parameter.FAN1RPM, size: 2 },
+    { param: Parameter.FAN2RPM, size: 2 },
+    { param: Parameter.FILTER_TIMER, size: 3 },
+    { param: Parameter.RESET_FILTER_TIMER, size: 1 },
+    { param: Parameter.BOOST_MODE_DEACTIVATION_DELAY, size: 1 },
+    { param: Parameter.RTC_TIME, size: 3 },
+    { param: Parameter.RTC_CALENDAR, size: 4 },
+    { param: Parameter.WEEKLY_SCHEDULE, size: 1 },
+    { param: Parameter.SCHEDULE_SETUP, size: 6 },
+    { param: Parameter.SEARCH, size: 16 },
+    { param: Parameter.MACHINE_HOURS, size: 4 },
+    { param: Parameter.RESET_ALARMS, size: 1 },
+    { param: Parameter.READ_ALARM, size: 1 },
+    { param: Parameter.CLOUD_SERVER_OPERATION_PERMISSION, size: 1 },
+    { param: Parameter.READ_FIRMWARE_VERSION, size: 6 },
+    { param: Parameter.RESTORE_FACTORY_SETTINGS, size: 1 },
+    { param: Parameter.FILTER_ALARM, size: 1 },
+    { param: Parameter.WIFI_MODE, size: 1 },
+    { param: Parameter.WIFI_NAME, size: 0 },
+    { param: Parameter.WIFI_PASSWORD, size: 0 },
+    { param: Parameter.WIFI_ENCRYPTION, size: 1 },
+    { param: Parameter.WIFI_CHANNEL, size: 1 },
+    { param: Parameter.WIFI_DHCP, size: 1 },
+    { param: Parameter.IP_ADDRESS, size: 4 },
+    { param: Parameter.SUBNET_MASK, size: 4 },
+    { param: Parameter.VENTILATION_MODE, size: 1 },
+    { param: Parameter.UNIT_TYPE, size: 2 },
+];
 
-] 
-
+/**
+ * Parameter namespace.
+ * 
+ * Contains utility functions for working with parameters.
+ */
 export namespace Parameter {
-    export function getSize(parameter: Parameter) {
-        const detail = details.find(d => d.param == parameter);
+    /**
+     * Gets the size in bytes for a given parameter.
+     * 
+     * @param {Parameter} parameter - The parameter for which to get the size.
+     * @returns {number} The size in bytes of the parameter, or -1 if the parameter is unknown.
+     */
+    export function getSize(parameter: Parameter): number {
+        const detail = details.find(d => d.param === parameter);
         return detail?.size ?? -1;
     }
 }

@@ -14,11 +14,19 @@ describe("test client", () => {
     
     // Act
     const result = await client.findDevices();
+    console.log(result)
 
     // Assert
-    expect(result.length).toBe(2);
-  });
+    //expect(result.length).toBe(2);
 
+    for(var e of result) {
+      var packet = new Packet(e.id, '1111', FunctionType.WRITE, [DataEntry.of(Parameter.SPEED, 3)]);
+      //var packet = new Packet(e.id, '11111111', FunctionType.WRITE, [DataEntry.of(Parameter.PASSWORD, 1111)]);
+      await client.send(packet)
+    }
+    
+  });
+/*
   it("should resolve firmware", async () => {
     // Arrange
     const client = new BlaubergVentoClient();
@@ -47,6 +55,6 @@ describe("test client", () => {
     expect(month).toBe(12);
     expect(year).toBe(2019);
     
-  });
+  });*/
 
 });

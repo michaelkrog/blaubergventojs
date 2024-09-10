@@ -29,14 +29,23 @@ export class Device implements Persistable<string> {
         public password: string
     ) {}
 
+    /**
+     * @deprecated
+     * Use static method instead. (Device.toPacket())
+     * @returns The packet for low level com.
+     */
     public toPacket(): Packet {
+        return Device.toPacket(this);
+    }
+
+    public static toPacket(device: Device): Packet {
         const dataEntries: DataEntry[] = [
-            DataEntry.of(Parameter.SPEED, this.speed),
-            DataEntry.of(Parameter.VENTILATION_MODE, this.mode),
-            DataEntry.of(Parameter.MANUAL_SPEED, this.manualSpeed),
-            DataEntry.of(Parameter.ON_OFF, this.on ? 1 : 0)
+            DataEntry.of(Parameter.SPEED, device.speed),
+            DataEntry.of(Parameter.VENTILATION_MODE, device.mode),
+            DataEntry.of(Parameter.MANUAL_SPEED, device.manualSpeed),
+            DataEntry.of(Parameter.ON_OFF, device.on ? 1 : 0)
         ];
-        return new Packet(this.id, this.password, FunctionType.WRITEREAD, dataEntries);
+        return new Packet(device.id, device.password, FunctionType.WRITEREAD, dataEntries);
     }
 
     public static fromPacket(packet: Packet): Device {

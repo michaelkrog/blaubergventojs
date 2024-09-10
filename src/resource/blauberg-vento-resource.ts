@@ -43,7 +43,7 @@ export class BlaubergVentoResource implements CrudRepository<Device, string>{
     }
 
     async save(entity: Device): Promise<Device> {
-        const packet = entity.toPacket();
+        const packet = Device.toPacket(entity);
         const ip = (await this.resolveIpMap()).get(entity.id);
         const response = await this.client.send(packet, ip) as Response;
         return response != null ? Device.fromPacket(response.packet) : null;
